@@ -1,150 +1,112 @@
 # When you are the slow part
 
+Draw the task. Put a harness under it. Touch the work twice.
+
 You can have a row of agents on code and on posts. You still have one pair of eyes. They finish and wait.
 
 That wait is the limit.
 
-I wrote this down for the days the queue is me.
+The speed comes from staying out of the middle. OpenAI's line, from the 11 February 2026 harness post, is the job: design the environment, name the intent, and build the check.
 
-The names for the fix arrived in order. A prompt is the card for one task. Context engineering, the term Cognition pushed in June 2025 and Anthropic picked up that September, is what the agent is allowed to see.
+## Build the harness once
 
-On 11 February 2026 OpenAI called the next layer harness engineering: the tools, the checks and the files around the model. Their job for you is the one worth keeping. The OpenAI line is short: design the environment, name the intent, and build the check.
+The harness is five boxes. The model is the part you can swap. Claude, Codex or another writer can sit in the loop box without a new method.
 
-Their beta is their number, on a new product: 0 lines typed by hand, on the order of 1 million lines, about 1/10th of the time, 3 engineers and then 7. On a repo you already maintain, and on a post under your name, measure your own.
+```text
+Map -> Place -> Loop -> Sensor -> Gate
+```
 
-## Two gates
+The map holds AGENTS.md or CLAUDE.md: commands, one landmine, one decision. Claude asks for under 200 lines, and Codex stops at 32 KiB.
 
-You touch a task twice.
+The place is one git worktree or one doc per writer. Branch from local HEAD when the next task must see your branch. Install dependencies there.
 
-Send. Fill the card. Leave the chat.
+The loop is one writer. It reads TASK.md and runs until the sensor passes. A second agent may search or review, and it leaves those files alone.
 
-Accept. The check came back with evidence, the result matches the card, and you keep it or return it once.
+The sensor is a command whose output comes back, the kind of check Claude's page asks you to paste. Use a test for code, or a voice checker plus a fact list for a post.
 
-If you are still in the thread while Claude or Codex works, you are the loop. The loop belongs to the agent. OpenAI's team called human time the scarce resource, and spent theirs making the app, the logs and the docs readable so a person could leave.
+The gate is you. Send, then accept. Merge and publish stay here, and so do spend and delete, when a mistake is expensive.
 
-Same idea for a post. For a LinkedIn post or a blog, the draft, the sources and the voice rules have to be files the agent can open.
+Keep the current task off the map, or every parallel Claude session inherits it. OpenAI tried one giant AGENTS.md, watched it rot, and cut theirs to about 100 lines that point at a docs/ tree.
 
-## The card
+Cognition's 2026 note, ten months after they warned against writer swarms: extra agents add judgment, and writes stay single-threaded. On PRs Devin wrote, the reviewer averaged 2 bugs a PR, about 58% of them severe, because it only saw the diff.
 
-One card for a bug, a post, a deck or a research pass.
+## Draw the task
+
+Put the task in TASK.md, in the worktree or next to the draft. The agent can read a file. It cannot read a picture that lives only in your head.
 
 ```text
 Outcome: what a person can see when this is done.
-Source: path, notes, or repro.
-Limits: two. Files you will leave alone, or facts the draft must leave out.
-Done: a command or a check. Paste the output.
-Lands: branch, file, or draft. You accept there.
+Owns: files or the draft this writer may change.
+Leave alone: two limits. Public API, secrets, or facts the draft must leave out.
+Sensor: the command or checker. Paste the output.
+Lands: branch, file, or draft.
+Depends on: none, or the task name that must be accepted first.
 ```
 
-If you cannot fill Done, this session writes the spec and stops. Claude Code's current page has the pattern: the agent interviews you, writes SPEC.md, and a fresh session builds from that file so the build starts clean.
+The diagram is the same file, read top to bottom. Outcome, then Owns, then Leave alone, then Sensor, then the gate. Depends on is the arrow from another task. Empty means this task may start now.
 
-Two corrections, then a new card. Claude's docs say a third correction mostly puts the two failed attempts back in front of the model on every later turn. Clear the thread, and write one prompt that includes what you learned in that Claude session.
+If you cannot fill Sensor, this session only writes TASK.md. A fresh session does the work. Claude Code's page uses that split so the build starts from the file, with the brainstorm left behind.
 
-"Be careful" and "make it production ready" add no fact. Current Claude models already aim at the smallest change that meets the request. Name the scope you want, because "don't be lazy" tends to make them do extra.
+Two corrections, then a new TASK.md. Claude's docs say a third correction mostly puts the two failed attempts back in front of the model on every later turn.
 
-## One writer, many tasks
+## Run one, then many
 
-One agent writes the task. Claude Code and Cursor each give it a worktree and a branch. A post gets its own doc.
+1. Commit or save TASK.md. Start one writer in that place and point it at the file.
+2. Leave the chat. The loop belongs to the agent.
+3. Read three things: the sensor output, the diff or the draft, and the outcome line.
+4. Accept, or return it once with the miss written into TASK.md.
 
-A second agent can search, run the check, or review the result with a clean context. Cognition's 2026 note, ten months after they warned against writer swarms: extra agents add judgment, and writes stay single-threaded. On PRs Devin wrote, that reviewer averaged 2 bugs a PR, about 58% of them severe, because it only sees the diff.
+Skip the tool log unless the summary cites a file you doubt. "All tests pass" tells you little. Claude's own team says that if you invest in one test, make it end to end, because a unit test can pass while the feature is broken.
 
-On Claude Code, tell the reviewer to report gaps that break the outcome and to skip style. A review told to find problems will always find some, and Claude's own page warns that fixing all of them grows the task. The writer still has the card, so it drops findings outside the outcome.
+And the patch must be unable to edit the rule that judges it, so Claude's team reads REVIEW.md from the base branch.
 
-Two writers on the same files will step on each other in one Cursor checkout. A git worktree, the kind Claude Code documents, only moves that fight to merge time. Merge one branch, rebase the next onto it, run the check, then merge.
+Which tasks may run together:
 
-Claude's default worktree starts from the remote default branch, so a second session misses the feature you have open unless you branch from local HEAD. A fresh worktree also has no dependencies and no .env until you install or copy them.
+```text
+Task A  owns src/api      depends on none   -> sensor -> gate
+Task B  owns the draft    depends on none   -> sensor -> gate
+Task C  owns src/api too  depends on A      -> waits
+```
 
-Send as many Claude or Codex tasks as you will accept today. When the accept pile grows, send nothing new.
+Start every task whose Depends on is empty and whose Owns list shares no path with a task already running. Accept A, rebase C onto that result, then start C. One branch at a time.
 
-A second model is for a different job: a read-only search, a clean-context review, or the same card on two strong models where you keep one result. Cognition tried a fast Windsurf model that was supposed to call Sonnet 4.5 when it got stuck. The fast model missed the moment to ask.
+Claude's default worktree starts from the remote default branch, so a second session misses your feature unless you branch from local HEAD.
 
-You pick the split.
+A second model is another box, with a different job. A read-only search. A review of the diff in a clean context, told to skip style. Or the same TASK.md on two strong models, and you keep one result.
 
-## A repeated correction becomes a file
+Cognition tried a fast Windsurf model that was supposed to call Sonnet 4.5 when it got stuck. The fast model missed the moment to ask. You pick the split.
 
-The first time, you fix the output. The second time, you write the fix where every later agent will hit it, or where a command fails.
+## Make the next run cheaper
 
-For code, the standing file (CLAUDE.md or AGENTS.md) holds only what the agent cannot see by reading the repo:
+The first miss, you fix the output. The second time you see that miss, you add a sensor or a line on the map. That is the whole gain, because the next Claude run hits the check before you do.
 
-- the exact test, typecheck and lint command, including how to run one file
-- a path that is still live and must stay uncopied
-- one decision the code leaves unstated
+A real never goes in CI, a deny rule, or a linter whose message contains the fix. A sentence in the prompt fails open. Claude's page says a Stop hook that exits non-zero is what blocks the turn.
 
-Claude loads that file on every turn and asks you to stay under 200 lines. /init drafts it, and the work is mostly deleting. Codex stops reading the chain at 32 KiB.
+For a post, the sensor is the checker and the fact list. A missing number stays missing. A public sentence stays with you. A wrong patch on OpenAI's internal product is cheap for them to follow up, and a wrong claim under your name is yours to accept.
 
-A giant manual crowds out the task. OpenAI tried one, watched it rot, and cut theirs to about 100 lines that point at a docs/ tree the agent opens when it needs them.
+## How you know it got faster
 
-The current task stays on the card. In the standing file, every parallel agent would inherit it.
+Count accepts today, and corrections you had to type twice. If the second number stays flat, the harness is still waiting on you.
 
-A real never (leave generated code alone, leave secrets alone, run this formatter) goes in CI, a deny rule, or a linter whose message contains the fix. A sentence fails open. Claude's page says prose holds most of the time, and a Stop hook that exits non-zero is what blocks the turn.
+METR timed 16 maintainers in early 2025, on repositories they already knew. With Cursor and Claude 3.5 or 3.7 Sonnet they took 19% longer, and afterward still believed they had been 20% faster. The extra time went to prompting and reviewing, plus the wait for the model.
 
-For a post or a deck, same move.
+Their February 2026 follow-up could not settle it. People refused the week with AI turned off, between 30% and 50% held tasks back, and the time logs broke once several agents ran at once. METR calls that evidence weak.
 
-- Voice rules and a checker. A slop linter is the content version of the test command.
-- A list of facts from your notes. A missing number stays missing.
-- A skill for raw notes to a draft, and another for one accepted piece into the other formats. The body loads when the task matches. It stays out of the window while you are in Cursor on code.
+OpenAI estimated about 1/10th of the time on a new product: 0 lines typed by hand, on the order of 1 million lines, 3 engineers and then 7. That number is theirs. On a repo you already maintain, use the two counts above.
 
-Anything that lives only in your head, a Slack thread, or a note the agent cannot open is invisible on that run. OpenAI drew it as a hard boundary: what Codex cannot see, it works around. Paste the fact into the card or into the repo.
+## This week
 
-## Code and content use the same accept
-
-Look at three things. The check output. The diff or the draft. Whether it matches the outcome.
-
-Skip the tool log unless the summary cites a file you doubt.
-
-For a bug, Done is a failing test that then passes, plus the command and the last lines of output. "All tests pass" tells you little. Claude's own team says that if you invest in one test, make it end to end, because a unit test can pass while the feature is broken.
-
-And the patch must be unable to edit the rule that judges it. They read REVIEW.md from the base branch for that reason.
-
-For a post or a deck, Done is the checker output plus the sources the draft used. You still accept it. A public sentence stays with you, while OpenAI lets agents merge a lot of an internal product because a wrong patch there is cheap to follow up.
-
-Auto-accept only where a wrong result is cheap to undo and the check is mechanical. A lab that can spend money, a delete, a merge to the shared branch of a tool other people run, and anything you publish stay on you.
-
-## The day
-
-Morning. Accept what finished. Send the next batch.
-
-Then go do the thing that still needs you in the room: a call, a lab only you can break, a decision you have yet to write down.
-
-Later, one more accept pass. Same three looks.
-
-Before you close the laptop, any correction you typed twice today becomes a line, a test or a skill. OpenAI's team used to spend Fridays cleaning agent output by hand. That failed to scale, so they encoded the taste into linters and a cleanup job, and they say most of those pulls take under a minute.
-
-The Friday is the smell. The file is the fix.
-
-## What stays yours
-
-1. Pick the outcome. The feature, the post, or the deck.
-2. Supply a fact only you have.
-3. Press send, merge, spend or delete when a mistake is expensive.
-4. Do a kind of task for the first time. The second time, encode it.
-
-## The feeling of speed lies
-
-METR timed this. In early 2025, 16 maintainers who already knew their repositories took 19% longer with Cursor and Claude 3.5 or 3.7 Sonnet. Before the tasks they expected to be 24% faster. Afterward they still believed they had been 20% faster.
-
-Screen time moved from typing code to prompting and reviewing, plus the wait for the model. The slowdown was larger on issues they knew well, where the model edited the wrong place and missed rules nobody had written down.
-
-Their February 2026 follow-up could not settle it. People refused the week with AI turned off, between 30% and 50% held back tasks they would skip by hand, and the time logs broke once several agents ran at once. METR calls the evidence weak.
-
-Count two things, and ignore how busy the agents look. How many results you accepted today. How many corrections you had to type twice.
-
-If that second number stays flat, the setup is still waiting on you.
-
-## Put it in this week
-
-1. Write the short standing file. Commands, one landmine, one decision. Delete the architecture tour.
-2. Add one check the work cannot satisfy by editing the check. A test for code. The voice checker plus a fact list for a post.
-3. Move one procedure you keep retyping into a skill.
-4. Put the next task in its own worktree or doc, fill the card, and leave the chat.
-5. Accept with the three looks. Write down the correction you would otherwise type again tomorrow.
-
-More agents help when the tasks do not share files, which is the Claude Code worktree rule, and each one has a check. Another sentence in the prompt helps once, on the card. After that, the speed is in the files the next agent already has.
+1. Write the map for one repo, or one content folder. Commands, one landmine, one decision.
+2. Add one sensor the work cannot satisfy by editing the sensor.
+3. Draw the next task as TASK.md. Start it in its own worktree or doc. Leave the chat.
+4. Accept with the three looks. Output, diff or draft, outcome.
+5. Turn the correction you would type again tomorrow into a sensor or a map line.
 
 ## Sources
 
-- METR, 10 July 2025, early-2025 maintainer study, and the 24 February 2026 note that the follow-up design broke: https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/ and https://metr.org/blog/2026-02-24-uplift-update/
-- Claude Code best practices (task card, 200-line CLAUDE.md, two corrections, checks): https://code.claude.com/docs/en/best-practices.md
 - OpenAI, 11 February 2026, harness engineering: https://openai.com/index/harness-engineering/
-- Cognition, 12 June 2025, and the follow-up about ten months later: https://cognition.ai/blog/dont-build-multi-agents and https://cognition.com/blog/multi-agents-working
-- Codex AGENTS.md size cap, 32 KiB default: https://learn.chatgpt.com/docs/agent-configuration/agents-md.md
+- OpenAI, 23 January 2026, the Codex agent loop: https://openai.com/index/unrolling-the-codex-agent-loop/
+- Claude Code best practices: https://code.claude.com/docs/en/best-practices.md
+- Cognition, 12 June 2025, and the 2026 follow-up: https://cognition.ai/blog/dont-build-multi-agents and https://cognition.com/blog/multi-agents-working
+- METR, 10 July 2025, and the 24 February 2026 note: https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/ and https://metr.org/blog/2026-02-24-uplift-update/
+- Codex AGENTS.md, 32 KiB default: https://learn.chatgpt.com/docs/agent-configuration/agents-md.md
