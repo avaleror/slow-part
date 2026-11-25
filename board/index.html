@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Control pack</title>
+  <meta name="description" content="Fill the harness and the task boxes. Download a folder Claude Code and Codex can read." />
+  <link rel="canonical" href="https://avaleror.github.io/slow-part/board/" />
+  <meta name="theme-color" content="#0A0D0B" />
+  <link rel="icon" type="image/svg+xml" href="../media/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../media/favicon-32.png" />
+  <link rel="apple-touch-icon" href="../media/favicon-180.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap" />
+  <link rel="stylesheet" href="../css/site.css" />
+  <link rel="stylesheet" href="board.css" />
+</head>
+<body class="tool">
+  <a class="skip-link" href="#pack">Skip to the board</a>
+  <header class="bar">
+    <a class="mark" href="https://andresvalero.tech/" aria-label="Andrés Valero, andresvalero.tech">
+      <img src="../media/mark.svg" alt="" width="608" height="160" />
+    </a>
+    <nav class="nav" aria-label="Site">
+      <a href="../">Guide</a>
+      <a href="./">Board</a>
+      <a href="https://andresvalero.tech/">Site</a>
+    </nav>
+  </header>
+  <main class="wrap" id="pack">
+    <p class="kicker"><b>Agents</b> Control pack</p>
+    <h1>Hand the agents a folder</h1>
+    <p class="lede">Fill the boxes. Download the files Claude Code and Codex already know how to read.</p>
+    <p class="by">This page does not start an agent. You drop the folder into the repo, one task per worktree.</p>
+    <div class="layout">
+      <div>
+        <section class="panel" aria-labelledby="map-title">
+          <h2 id="map-title">Map</h2>
+          <p class="by">Once per repo. Leave the current task out of this file.</p>
+          <label><span>Commands</span><textarea id="commands"></textarea></label>
+          <label><span>Landmine</span><textarea id="landmine"></textarea></label>
+          <label><span>Decision</span><textarea id="decision"></textarea></label>
+        </section>
+        <section class="panel second" aria-labelledby="tasks-title">
+          <h2 id="tasks-title">Tasks</h2>
+          <div class="actions">
+            <button type="button" id="new-task">Add task</button>
+            <button type="button" id="example">Load the example</button>
+            <button type="button" class="go" id="download">Download</button>
+          </div>
+          <div id="tasks"></div>
+        </section>
+      </div>
+      <aside class="panel queue" aria-live="polite" aria-labelledby="queue-title">
+        <h2 id="queue-title">Queue</h2>
+        <div id="queue"></div>
+        <p class="by">AGENTS.md and CLAUDE.md go at the repo root. Put each TASK.md in its own worktree.</p>
+      </aside>
+    </div>
+  </main>
+  <footer class="foot">
+    <div class="inner">
+      <ul class="stripe" aria-hidden="true">
+        <li class="own"></li>
+        <li class="k8s"></li>
+        <li class="ai"></li>
+        <li class="stage"></li>
+        <li class="edge"></li>
+        <li class="telco"></li>
+      </ul>
+      <p>Andrés Valero. <a href="../">The guide</a>. <a href="https://andresvalero.tech/">andresvalero.tech</a></p>
+    </div>
+  </footer>
+  <script type="module" src="board.js"></script>
+</body>
+</html>
